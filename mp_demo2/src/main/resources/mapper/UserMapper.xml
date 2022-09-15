@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mp_demo2.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.mp_demo2.pojo.User">
+            <id property="uid" column="uid" jdbcType="BIGINT"/>
+            <result property="name" column="user_name" jdbcType="VARCHAR"/>
+            <result property="age" column="age" jdbcType="INTEGER"/>
+            <result property="email" column="email" jdbcType="VARCHAR"/>
+            <result property="sex" column="sex" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        uid,user_name,age,
+        email,sex
+    </sql>
+    <insert id="insertSelective">
+        insert into mp_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uid != null">uid,</if>
+            <if test="name != null">user_name,</if>
+            <if test="age != null">age,</if>
+            <if test="email != null">email,</if>
+            <if test="sex != null">sex,</if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uid != null">#{uid,jdbcType=BIGINT},</if>
+            <if test="name != null">#{name,jdbcType=VARCHAR},</if>
+            <if test="age != null">#{age,jdbcType=INTEGER},</if>
+            <if test="email != null">#{email,jdbcType=VARCHAR},</if>
+            <if test="sex != null">#{sex,jdbcType=INTEGER},</if>
+        </trim>
+    </insert>
+    <delete id="deleteByUidAndAge">
+        delete
+        from mp_user
+        where uid = #{uid,jdbcType=NUMERIC}
+          AND age = #{age,jdbcType=NUMERIC}
+    </delete>
+    <update id="updateAgeAndSexByUid">
+        update mp_user
+        set age = #{age,jdbcType=NUMERIC},
+            sex = #{sex,jdbcType=NUMERIC}
+        where uid = #{uid,jdbcType=NUMERIC}
+    </update>
+    <select id="selectAllByAgeAndSexBetweenOrderByUid" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from mp_user
+        where
+        age = #{age,jdbcType=NUMERIC}
+        AND sex between #{beginSex,jdbcType=INTEGER} and #{endSex,jdbcType=INTEGER}
+        order by uid
+    </select>
+</mapper>
